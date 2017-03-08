@@ -1,0 +1,73 @@
+var b = [];
+ for(var a = 0;a<8;a++){
+  b.add([true,true,true,true,true,true,true,true]);                   //in diesem zweidimensionalen Array(das Schachfeld) sind die Felder auf denen kein Objekt ist, die aber zum Spielfeld gehören mit true belegt
+ } 
+function SchachspielErstellen(){                                                                   // vlt kann auf dieses Array verzichtet werden, man sollte die Alternative ausprobieren
+b[0][0]= new Turm("weiß",0,0);                                       // man könnte statt die leeren Felder true zu setzen sie auf ein Objekt setzen was ebenfalls die Property Farbe hat und weder mit weiß oder schwarz belegt ist,damit das hier wirklich funktioniert
+b[0][1]= new Springer("weiß",0,1);
+b[0][2]= new Läufer("weiß",0,2);
+b[0][3]= new Dame("weiß",0,3);
+b[0][4]= new König("weiß",0,4);
+b[0][5]= new Läufer("weiß",0,5);
+b[0][6]= new Springer("weiß",0,6);
+b[0][7]= new Turm("weiß",0,7);
+b[1][0]= new Bauer("weiß",1,0);
+b[1][1]= new Bauer("weiß",1,1);
+b[1][2]= new Bauer("weiß",1,2);
+b[1][3]= new Bauer("weiß",1,3);
+b[1][4]= new Bauer("weiß",1,4);
+b[1][5]= new Bauer("weiß",1,5);
+b[1][6]= new Bauer("weiß",1,6);
+b[1][7]= new Bauer("weiß",1,7);
+b[6][0]= new Bauer("schwarz",6,0);
+b[6][1]= new Bauer("schwarz",6,1);
+b[6][2]= new Bauer("schwarz",6,2);
+b[6][3]= new Bauer("schwarz",6,3);
+b[6][4]= new Bauer("schwarz",6,4);
+b[6][5]= new Bauer("schwarz",6,5);
+b[6][6]= new Bauer("schwarz",6,6);
+b[6][7]= new Bauer("schwarz",6,7);
+b[7][0]= new Turm("schwarz",7,0);
+b[7][1]= new Springer("schwarz",7,1);
+b[7][2]= new Läufer("schwarz",7,2);
+b[7][3]= new Dame("schwarz",7,3);
+b[7][4]= new König("schwarz",7,4);
+b[7][5]= new Läufer("schwarz",7,5);
+b[7][6]= new Springer("schwarz",7,6);
+b[7][7]= new Turm("schwarz",7,7);
+}
+
+var spielverlauf = new Spielverlauf();
+
+
+function Spielverlauf(){
+ var spielverlauf = [];
+ this.hinzufügen = function(informationenpaket){
+  spielverlauf.add(informationenpaket);
+ }
+ this.zügeZurück = function(anzahl){
+  for(var i = 0;i<anzahl;i++){
+   var informationenpaket = spielverlauf[spielverlauf.length-1];                                           //zu zügeZürück muss noch eingebracht werden, dass er auch die Statistiken bis zu dem Moment zurücksetzt
+   spielverlauf[spielverlauf.length-1] = undefined;                                                        //muss nochmal nachgucken wie man das letzte Element des Arrays löscht
+   b[informationenpaket[3]][informationenpaket[4]] = b[informationenpaket[1]][informationenpaket[2]];      // es wäre außerdem schöner die pakete nicht als array zu machen sondern als objekt mit eigenschaften, da es dann übersichtlicher wird und man nicht gucken muss bei welchem index was liegt
+   b[informationenpaket[1]][informationenpaket[2]] = informationenpaket[0]; 
+   b[informationenpaket[3]][informationenpaket[4]] -= informationspaket[0].wertigkeit;  
+  }
+ }
+ this.spielAngucken = function(){
+   SchachspielErstellen();
+   for(var i = 0;i<spielverlauf.length;i++){
+    while(true){
+     if(SignalGegeben()){                                                                                  //das Signalgeben muss in Form eines Buttons erfolgen
+      setze(spielverlauf[i][3],spielverlauf[i][4],spielverlauf[i][1],spielverlauf[i][2]);
+      break;
+  }}}}
+                                                                                          
+function setze(reihe1,reihe2,neueReihe1,neueReihe2){                                                 //setze gibt außerdem die Wertigkeit des geschlagenen Objektes zurück damit am Ende der Mvp bestimmt werden kann( Quotient aus eigener Wertigkeit und geschlagener Wertigkeit)
+ var a = [b[neueReihe1][neueReihe2],neueReihe1,neueReihe2,reihe1,reihe2,];   
+ var w = b[neueReihe1][neueReihe2].wertigkeit;    
+ b[neueReihe1][neueReihe2]= b[reihe1][reihe2];                                                      //außerdem könnten die Informationen über geschlagene Figuren in einer Liste gehalten werden, die dann wiederum auch mehrfaches zurücksetzen und einen Spielverlauf ermöglicht, das wäre eigentlich ein besseres System
+ b[reihe1][reihe2]= true;
+ spielverlauf.hinzufügen(a);
+ return w;
+}

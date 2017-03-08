@@ -1,0 +1,323 @@
+
+
+function wirdDasFeldBedroht(f,g,farbe){              // f hält anfolgend immer den Wert auf der achse0 und g auf der achse1         
+ for(var i=0,l=0;l<8;if(i==8){l++,i=0}else{l++}){    //bin nicht sicher ob das auf diese Weise geht
+  if(b[l][i].["farbe"]!=farbe){
+   var h =  b[0][i].setzmöglichkeiten,j;
+   j= h.freieFelder;
+   for(var k=0;k<j.length;k++){
+    if(j[k][0]==f&&j[k][1]==g){
+     return true;
+ }}}}
+ return false;
+}
+
+function Schachobjekt(farbe,wertigkeit,achse0,achse1,name,kürzel){       //ich bin mir gar nicht sicher ob die 3 Zustände im Prototyp-Objekt gehalten werden können, weil das Prototyü-objekt nur einfach existiert, wenn s nicht klappt dann mach ich die funktionen an nen anderes Objekt ran so dass sie darüber aufgerufen werden können
+ this.Kürzel = kürzel;
+ this.["farbe"] = farbe;
+ this.["wertigkeit"] = wertigkeit;
+ this.position = [achse0,achse1];
+ this.bisherGeschlagen = 0;
+ this.zügeGemacht = 0;
+ this.setzen = function(){
+  var a= "Folgende Felder sind frei:",d = this.zielmöglichkeiten,c = d.freieFelder;                                         // bei den setzen Funktionen wird zuerst angezeigt wohin gesetzt werden kann und dann kann der Spieler auswählen
+  for(var i = 0;i<c.length;i++){
+   a += " "+c[i][0]+"|";                                                          
+   a += c[i][1];
+  }
+  a +=  "Folgende Felder können geschlagen werden:";
+  c=d.schlagmöglichkeiten;
+  for(var i = 0;i<c.length;i++){
+  a += " "+c[i][0]+"|";
+  a += c[i][1];
+ }
+ var f = prompt("Sie können "+name+" zu folgenden Feldern setzen, bitte geben sie in gleicher Syntax die Zielposition ein",a).splice("|");
+ var g = f[0], h = f[1],j =[],k=0;                                                                                                             //j soll der zusammengefügte Array der möglichkeiten werden 
+ for(var i=0;i< j.length;i++){
+  if(j[i][0]==g&&j[i][1]==h){
+   this.bisherGeschlagen += setze(c,d,g,h);
+   this.position[0] = g;
+   this.position[1] = h;
+   this.zügeGemacht++;
+   k=1;
+   break;
+  }
+ }
+ if(k==0){
+  alert("wiederholen sie den Setzaufruf, ihre Eingabe war nicht möglich!");
+  }
+ }
+
+function Bauer(farbe,achse0,achse1){  
+ 
+ this.prototype = new Schachobjekt(farbe,1,achse0,achse1,"den Bauern","B")         //falls das mit prototype nicht funktioniert würde ich das so lösen: this.a = new Schachobjekt(farbe1,achse0,achse1,"den Bauern"); ein aufruf wäre dann b[c][d].a.farbe                           
+ this.ziehmöglichkeiten = function(){
+
+  c=this.position[0],d=this.position[1],e=this.["farbe"],f,g,freieFelder=[],schlagmöglichkeiten=[],positionsarray=[],k=this.wertigkeit; // bin nicht sicher ob das this nicht dann für die setzen function gilt, das wäre ungünstig
+
+  function AddSchlagmöglichkeiten(f,g){  //nur für Bauern
+   if(b[f][g].farbe!=e){
+     positionsarray[0]=f;
+     positionsarray[1]=g;  
+     positionsarray[2]=k;                                   
+     schlagmöglichkeiten.add(positionsarray);
+  }}
+
+  funcion AddFreiesFeld(f,g){
+   if(b[f][g] == true){     
+     positionsarray[0]=f;
+     positionsarray[1]=g;                                     
+     freieFelder.add(positionsarray);  
+  }}  
+
+  if(e=="weiß"){
+   if(c==1){
+    AddFreiesFeld(c+2,d)
+   }else if(c==7){                                                                                                                        //falls der eine Bauer das Ende erreicht hat , ist aber bisher nicht zu gebrauchen für den vorhersehalgorithmus da nicht rückgängig gemacht werden kann
+    var l = prompt("Wählen Sie aus mit welcher Figur sie den Bauern ersetzen wollen!","\"Dame\",\"Turm\",\"Läufer\" oder \"Springer\"");
+    switch(l){ 
+     case"Dame": b[8][d] = new Dame("weiß",8,d),break;
+     case"Turm": b[8][d] = new Turm("weiß",8,d),break;
+     case"Läufer": b[8][d] = new Läufer("weiß",8,d),break;
+     case"Springer": b[8][d] = new Springer("weiß",8,d),break;
+   }}                                                      
+   AddFreiesFeld(c+1,d);
+   AddSchlagmöglichkeiten(c+1,d-1);
+   AddSchlagmöglichkeiten(c+1,d+1);
+  }else{
+   if(c==6){
+    AddFreiesFeld(c-2,d)
+   }else if(c==0){
+    var l = prompt("Wählen Sie aus mit welcher Figur sie den Bauern ersetzen wollen!","\"Dame\",\"Turm\",\"Läufer\" oder \"Springer\"");
+    switch(l){                                                                                                                             //das switch konstrukt ist von der Syntax wahrscheinlich falsch
+     case"Dame": b[0][d] = new Dame("weiß",8,d),break;
+     case"Turm": b[0][d] = new Turm("weiß",8,d),break;
+     case"Läufer": b[0][d] = new Läufer("weiß",8,d),break;
+     case"Springer": b[0][d] = new Springer("weiß",8,d),break;
+   }}  
+   AddFreiesFeld(c-1,d);
+   AddSchlagmöglichkeiten(c-1,d-1);
+   AddSchlagmöglichkeiten(c-1,d+1);
+  }
+  var a = {["freieFelder"]:freieFelder,["schlagmöglichkeiten"]:schlagmöglichkeiten};
+  return a;
+}}
+function Turm(farbe,achse0,achse1){
+ this.prototype = new Schachobjekt(farbe,5,achse0,achse1,"den Turm","T");
+ this.ziehmöglichkeiten = function(){
+  c=this.position[0],d=this.position[1],e=this.["farbe"],freieFelder=[],schlagmöglichkeiten=[],positionsarray=[],k=this.wertigkeit; // bin nicht sicher ob das this nicht dann für die setzen function gilt, das wäre ungünstig
+  function addWennGehtMitBreak(f,g){    //könnte sein das das break gekapselt nicht funktioniert, dann müsste eine bedingung der while schleife nicht mehr erfüllt sein, 
+   if(b[f][g]==true){
+     positionsarray[0]=f;
+     positionsarray[1]=g;                                     
+     freieFelder.add(positionsarray);
+     i++;
+   }else if(b[f][g].farbe!=e){ //!
+     positionsarray[0]=f;
+     positionsarray[1]=g;   
+     positionsarray[2]=k;                                  
+     schlagmöglichkeiten.add(positionsarray);
+    break;
+   }else{
+    break;
+   }
+  }
+  while(true){
+   var i=1;
+   addWennGehtMitBreak(c+i,d);
+  }
+  while(true){
+   var i=1;
+   addWennGehtMitBreak(c-i,d);
+  }
+  while(true){
+   var i=1,f=c,g=d+i;
+   addWennGehtMitBreak(c,d+i);
+  }
+  while(true){
+   var i=1,f=c, g=d-i;
+   addWennGehtMitBreak(c,d-i);
+  }
+ var a = {["freieFelder"]:freieFelder,["schlagmöglichkeiten"]:schlagmöglichkeiten};
+ return a;
+}
+}
+function Läufer(farbe,achse0,achse1){
+ this.prototype = new Schachobjekt(farbe,3,achse0,achse1,"den Läufer","L");
+ this.ziehmöglichkeiten = function(){
+  c=this.position[0],d=this.position[1],e=this.["farbe"],freieFelder=[],schlagmöglichkeiten=[],positionsarray=[],k=this.wertigkeit;
+  function addWennGehtMitBreak(f,g){    //könnte sein das das break gekapselt nicht funktioniert, dann müsste eine bedingung der while schleife nicht mehr erfüllt sein, 
+   if(b[f][g]==true){
+     positionsarray[0]=f;
+     positionsarray[1]=g;                                     
+     freieFelder.add(positionsarray);
+     i++;                                //auch einzigartig in diesem AddWEnnGeht
+   }else if(b[f][g].farbe!=e){ //!
+     positionsarray[0]=f;
+     positionsarray[1]=g; 
+     positionsarray[2]=k;                                    
+     schlagmöglichkeiten.add(positionsarray);
+    break;
+   }else{
+    break;
+   }
+  }
+  while(true){
+   var i=1;
+   addWennGehtMitBreak(c+i,d+i);
+  }
+  while(true){
+   var i=1, f=c-i, g=d-i;
+   addWennGehtMitBreak(c-i,d-i);
+  }
+  while(true){
+   var i=1, f=c-i,g=d+i;
+   addWennGehtMitBreak(c-i,d+i);
+  }
+  while(true){
+   var i=1, f=c+i,g=d-i;
+   addWennGehtMitBreak(c+i,d-i);                                                  
+  }
+  var a = {["freieFelder"]:freieFelder,["schlagmöglichkeiten"]:schlagmöglichkeiten};
+  return a;
+ }
+}
+function Dame(farbe,achse0,achse1){
+ this.prototype = new Schachobjekt(farbe,10,achse0,achse1,"die Dame","D");
+ this.ziehmöglichkeiten = function(){
+  c=this.position[0],d=this.position[1],e=this.["farbe"],freieFelder=[],schlagmöglichkeiten=[],positionsarray=[],k=this.wertigkeit; // bin nicht sicher ob das this nicht dann für die setzen function gilt, das wäre ungünstig
+  
+  function addWennGehtMitBreak(f,g){    //könnte sein das das break gekapselt nicht funktioniert, dann müsste eine bedingung der while schleife nicht mehr erfüllt sein, 
+   if(b[f][g]==true){
+     positionsarray[0]=f;
+     positionsarray[1]=g;                                     
+     freieFelder.add(positionsarray);
+     i++;                                //auch einzigartig in diesem AddWEnnGeht
+   }else if(b[f][g].farbe!=e){ //!
+     positionsarray[0]=f;
+     positionsarray[1]=g;  
+     positionsarray[2]=k;                                   
+     schlagmöglichkeiten.add(positionsarray);
+    break;
+   }else{
+    break;
+  }}  
+  while(true){
+   var i=1;
+   addWennGehtMitBreak(c+i,d);
+  }
+  while(true){
+   var i=1;
+   addWennGehtMitBreak(c-i,d);
+  }
+  while(true){
+   var i=1,f=c,g=d+i;
+   addWennGehtMitBreak(c,d+i);
+  }
+  while(true){
+   var i=1,f=c, g=d-i;
+   addWennGehtMitBreak(c,d-i);
+  }
+while(true){
+   var i=1;
+   addWennGehtMitBreak(c+i,d+i);
+  }
+  while(true){
+   var i=1, f=c-i, g=d-i;
+   addWennGehtMitBreak(c-i,d-i);
+  }
+  while(true){
+   var i=1, f=c-i,g=d+i;
+   addWennGehtMitBreak(c-i,d+i);
+  }
+  while(true){
+   var i=1, f=c+i,g=d-i;
+   addWennGehtMitBreak(c+i,d-i);                                                  
+  }
+  var a = {["freieFelder"]:freieFelder,["schlagmöglichkeiten"]:schlagmöglichkeiten};
+  return a;
+}}
+ 
+function Springer(farbe,reihe1,reihe2){
+ this.prototype = new Schachobjekt(farbe,3,achse0,achse1,"den Springer","S");
+ this.ziehmöglichkeiten = function(){
+  c=this.position[0],d=this.position[1],e=this.["farbe"],freieFelder=[],schlagmöglichkeiten=[],positionsarray=[],k=this.wertigkeit;
+  function addWennGeht(f,g){           //könnte außerhalb dieser funktion definiert werden und von fast allen gebraucht werden(wenn geändert), dabei hat diese funktion aber immer vier fünf argumente,die eingetragen werden müssen, das könnte darüber gelöst werden, das die funktion an nem objekt ist welches am anfang die werte nimmt
+   if(b[f][g]==true){
+     positionsarray[0]=f;
+     positionsarray[1]=g;                                     
+     freieFelder.add(positionsarray);
+   }else if(b[f][g].farbe!=e){
+     positionsarray[0]=f;
+     positionsarray[1]=g;  
+     positionsarray[2]=k;                             
+     schlagmöglichkeiten.add(positionsarray);
+   }
+  }
+   addWennGeht(c+1,d-2);
+   addWennGeht(c+1,d+2);    
+   addWennGeht(c-1,d-2);
+   addWennGeht(c-1,d+2);
+   addWennGeht(c+2,d+1);
+   addWennGeht(c+2,d-1);
+   addWennGeht(c-2,d-1);
+   addWennGeht(c-2,d+1);
+   }
+  var a = {["freieFelder"]:freieFelder,["schlagmöglichkeiten"]:schlagmöglichkeiten};
+  return a;
+ }
+}
+function König(farbe,achse0,achse1){                                              
+ this.prototype = new Schachobjekt(farbe,1000,achse0,achse1,"den König","K");
+ this.ziehmöglichkeiten = function(){ 
+  c=this.position[0],d=this.position[1],e=this.["farbe"],freieFelder=[],schlagmöglichkeiten=[],positionsarray=[],k=this.wertigkeit;                                                 
+   
+ function wennFreiAdd(f,g){                //so wie das hier umgesetzt ist kann das auch im Springer umgesetzt sein,es sollte aber noch überprüft werden ob die funktion hier drin stehen kann, was ja praktisch ist weil es auf die werte zugreifen kann;
+  if(!wirdDasFeldBedroht(f,g,e)){ 
+   if(b[f][g]==true){
+     positionsarray[0]=f;
+     positionsarray[1]=g;                                     
+     freieFelder.push(positionsarray);    
+   }else if(b[f][g].farbe!=e){
+     positionsarray[0]=f;
+     positionsarray[1]=g; 
+     positionsarray[2]=k; //neben der Schlagposition wird auch zusätzlich zur liste die wertigkeit des zu schlagen möglichen Objekts gespeichert                                   
+     schlagmöglichkeiten.push(positionsarray);
+   }
+  }
+ }
+   wennFreiAdd(c+1,d+1);
+   wennFreiAdd(c+1,d);
+   wennFreiAdd(c-1,d);
+   wennFreiAdd(c-1,d+1);
+   wennFreiAdd(c,d+1);
+   wennFreiAdd(c,d-1);
+   wennFreiAdd(c+1,d-1);
+   wennFreiAdd(c-1,d-1);
+                                         // if(this.zügeGemacht ==0){     //soll rochade werden
+                                         // if(b[0][0].kürzel==T&&b[0][0].zügeGemacht==0){
+}}
+
+
+
+
+
+
+                                      //wird für die Königbewegung benötigt und natürlich für die Schachansage gebraucht;geplant ist, dass überprüft wird ob der König in einem der möglichen Felder aller anderen gegnerischen steht
+ 
+                                      //wahrscheinlich wäre es besser mit den Tatsächlichen bezeichnern für die Felder zu arbeiten statt mit den indexen , weil es deutlich übersichtlicher ist und das ist das wichtigste
+
+                                      //es könnte sein, dass man gänzlich ohne Array auskommt, und nur die Positionen der Figuren benötigt, mir kommt das alles nämlich doppelt gemoppelt vor
+  
+                                      //Es sollte 
+
+     
+
+
+
+
+
+
+    
+
+

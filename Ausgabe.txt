@@ -1,0 +1,59 @@
+ function SchachspielAusgeben(){
+  var schachspielString = "   A   B   C   D   E   F   G   H\n";
+  for(var i = 0; i<8;i++){
+   schachspielString += reiheErstellen(i);
+  }
+  alert(schachspielString);  
+ }
+ function PositionStringen(achse0,achse1){
+  var position = ""; 
+  switch(achse1){
+   case 0: var b = "A",break();
+   case 1: var b = "B",break();
+   case 2: var b = "C",break();  
+   case 3: var b = "D",break();
+   case 4: var b = "E",break();
+   case 5: var b = "F",break();
+   case 6: var b = "G",break();
+   case 7: var b = "H",break();
+  } 
+  position += b;
+  position += (achse0+1);
+  return position;
+}
+
+ function reiheErstellen(reihenindex){
+  var reihe = "";
+  reihe += (reihenindex+1)+" ";
+  for (var i = 0; i<8;i++){
+   if(b[reihenindex][i]==true){
+    reihe += " ";
+   }else{
+    reihe += b[reihenindex][i].kürzel;
+   }
+   reihe +=" ";
+  }
+  reihe +="\n";
+ }
+
+
+  A B C D E F G H
+1 T S L D K
+2
+3
+4
+5
+6
+7
+8
+
+
+                                      //wird für die Königbewegung benötigt und natürlich für die Schachansage gebraucht;geplant ist, dass überprüft wird ob der König in einem der möglichen Felder aller anderen gegnerischen steht
+ 
+                                      //wahrscheinlich wäre es besser mit den Tatsächlichen bezeichnern für die Felder zu arbeiten statt mit den indexen , weil es deutlich übersichtlicher ist und das ist das wichtigste
+
+                                      //es könnte sein, dass man gänzlich ohne Array auskommt, und nur die Positionen der Figuren benötigt, mir kommt das alles nämlich doppelt gemoppelt vor
+  
+                                      //Es sollte 
+
+
